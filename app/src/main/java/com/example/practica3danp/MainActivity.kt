@@ -6,8 +6,12 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +31,8 @@ import com.example.practica3danp.CursoPackage.CursoViewModel
 import com.example.practica3danp.ui.theme.Practica3DANPTheme
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.text.TextStyle
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -131,18 +137,73 @@ fun Greeting(repository: Repository, navController: NavController) {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Button(
-                        onClick = { },
+                        onClick = {  },
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     ) {
                         Text("Mostror Cursos con Almunos")
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
-
+                    MyApp(repository)
 
                 }
             }
         )
+    }
+}
+
+
+@Composable
+fun MyApp(repository: Repository) {
+
+    LaunchedEffect(Unit) {
+        val alumnoCursoCrossRef = AlumnoCursoCrossRef(1, 1)
+        val alumnoCursoCrossRef2 = AlumnoCursoCrossRef(1, 2)
+        val alumnoCursoCrossRef3 = AlumnoCursoCrossRef(1, 3)
+
+
+
+        repository.insertAlumnoCursoCrossRef(alumnoCursoCrossRef)
+        repository.insertAlumnoCursoCrossRef(alumnoCursoCrossRef2)
+        repository.insertAlumnoCursoCrossRef(alumnoCursoCrossRef3)
+    }
+    val alumnosConCursos by repository.getAlumnosWithCursos().collectAsState(initial = emptyList())
+
+    AlumnosConCursosList(alumnosConCursos)
+}
+
+@Composable
+fun AlumnosConCursosList(alumnosConCursos: List<Alumnos_Cursos>) {
+    LazyColumn {
+        items(alumnosConCursos) { alumnoConCursos ->
+            AlumnoConCursosItem(alumnoConCursos)
+        }
+    }
+}
+
+@Composable
+fun AlumnoConCursosItem(alumnoConCursos: Alumnos_Cursos) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = "Alumno: ${alumnoConCursos.alumno.AlumnoNombre}",
+            style = TextStyle(fontSize = 16.sp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Cursos:",
+            style = TextStyle(fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        alumnoConCursos.cursos.forEach { curso ->
+            Text(
+                text = curso.CursoNombre,
+                style = TextStyle(fontSize = 14.sp)
+            )
+        }
     }
 }
 

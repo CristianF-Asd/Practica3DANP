@@ -1,5 +1,6 @@
 package com.example.practica3danp
 
+import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
 class Repository (private  val appDatabase: AppDatabase) {
@@ -23,6 +24,15 @@ class Repository (private  val appDatabase: AppDatabase) {
     suspend fun deleteCurso(curso: Curso){
         appDatabase.cursoDao().deleteCurso(curso)
     }
+    suspend fun insertAlumnoCursoCrossRef(alumnoCursoCrossRef: AlumnoCursoCrossRef){
+        appDatabase.alumnoDao().insertAlumnoCursoCrossRef(alumnoCursoCrossRef)
+    }
+
+
+    fun getAlumnosWithCursos(): Flow<List<Alumnos_Cursos>>{
+        return appDatabase.alumnoDao().getAlumnosWithCursos()
+    }
+
 
 
 

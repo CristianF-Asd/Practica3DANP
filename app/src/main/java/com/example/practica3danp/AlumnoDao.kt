@@ -17,7 +17,10 @@ interface AlumnoDao {
 
     @Transaction
     @Query("SELECT * FROM alumno")
-    fun getAlumnosWithCursos(): List<Alumnos_Cursos>
+    fun getAlumnosWithCursos(): Flow<List<Alumnos_Cursos>>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertAlumnoCursoCrossRef(alumnoCursoCrossRef: AlumnoCursoCrossRef)
 
 
 
